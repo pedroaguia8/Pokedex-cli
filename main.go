@@ -2,12 +2,11 @@ package main
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 	"strings"
+
+	"github.com/pedroaguia8/Pokedex-cli/internal/pokeapi"
 )
 
 func main() {
@@ -16,6 +15,8 @@ func main() {
 	config := config{
 		Next: "https://pokeapi.co/api/v2/location-area/",
 	}
+
+	fmt.Println("Welcome to the Pokedex!")
 
 	for {
 		fmt.Print("Pokedex > ")
@@ -55,23 +56,9 @@ func commandHelp(*config) error {
 }
 
 func commandMap(config *config) error {
-	res, err := http.Get(config.Next)
+	mapRes, err := pokeapi.GetLocationAreas(config.Next)
 	if err != nil {
-		return fmt.Errorf("error making request: %w", err)
-	}
-	body, err := io.ReadAll(res.Body)
-	err = res.Body.Close()
-	if err != nil {
-		return fmt.Errorf("error closing response body: %w", err)
-	}
-	if res.StatusCode > 299 {
-		return fmt.Errorf("response failed with status code: %d and\nbody: %s\n", res.StatusCode, body)
-	}
-
-	mapRes := mapResponse{}
-	err = json.Unmarshal(body, &mapRes)
-	if err != nil {
-		return fmt.Errorf("error unmarshalling responde: %w", err)
+		return fmt.Errorf("error getting location areas: %w", err)
 	}
 
 	if mapRes.Next != nil {
@@ -89,6 +76,30 @@ func commandMap(config *config) error {
 }
 
 func commandMapb(config *config) error {
+	if config.Previous == "" {
+		fmt.Println("you're on the first page")
+		return nil
+	}
+
+	mapRes, err := pokeapi.GetLocationAreas(config.Previous)
+	if err != nil {
+		return fmt.Errorf("error getting location areas: %w", err)
+	}
+
+	if mapRes.Next != nil {
+		config.Next = *mapRes.Next
+	} else {
+		config.Next = ""
+	}
+	if mapRes.Previous != nil {
+		config.Previous = *mapRes.Previous
+	} else {
+		config.Previous = ""
+	}
+
+	for _, result := range mapRes.Results {
+		fmt.Println(result.Name)
+	}
 
 	return nil
 }
@@ -136,14 +147,4 @@ type cliCommand struct {
 type config struct {
 	Next     string
 	Previous string
-}
-
-type mapResponse struct {
-	Count    int     `json:"count"`
-	Next     *string `json:"next"`
-	Previous *string `json:"previous"`
-	Results  []struct {
-		Name string `json:"name"`
-		URL  string `json:"url"`
-	} `json:"results"`
 }
