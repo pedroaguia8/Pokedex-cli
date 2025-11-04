@@ -12,10 +12,12 @@ import (
 func main() {
 	cache := pokecache.NewCache(5 * time.Minute)
 
-	initialURL := "https://pokeapi.co/api/v2/location-area/?offset=0&limit=20"
+	baseUrl := "https://pokeapi.co/api/v2"
+	nextLocationAreaUrl := baseUrl + "/location-area/?offset=0&limit=20"
 	config := config{
-		Cache: cache,
-		Next:  &initialURL,
+		Cache:            cache,
+		BaseUrl:          &baseUrl,
+		NextLocationArea: &nextLocationAreaUrl,
 	}
 
 	fmt.Println("Welcome to the Pokedex!")

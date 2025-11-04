@@ -7,9 +7,10 @@ import (
 )
 
 type config struct {
-	Next     *string
-	Previous *string
-	Cache    *pokecache.Cache
+	BaseUrl              *string
+	NextLocationArea     *string
+	PreviousLocationArea *string
+	Cache                *pokecache.Cache
 }
 
 type cliCommand struct {
@@ -43,7 +44,7 @@ func getCliCommands() map[string]cliCommand {
 		"explore": {
 			name:        "explore <area>",
 			description: "List of all the Pokémon in an area",
-			callback:    commandMapb,
+			callback:    commandExplore,
 		},
 	}
 }

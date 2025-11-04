@@ -7,18 +7,18 @@ import (
 )
 
 func commandMap(config *config, _ []string) error {
-	if config.Next == nil {
+	if config.NextLocationArea == nil {
 		fmt.Println("you're on the last page")
 		return nil
 	}
 
-	mapRes, err := pokeapi.GetLocationAreas(*config.Next, config.Cache)
+	mapRes, err := pokeapi.GetLocationAreas(*config.NextLocationArea, config.Cache)
 	if err != nil {
 		return fmt.Errorf("error getting location areas: %w", err)
 	}
 
-	config.Next = mapRes.Next
-	config.Previous = mapRes.Previous
+	config.NextLocationArea = mapRes.Next
+	config.PreviousLocationArea = mapRes.Previous
 
 	for _, result := range mapRes.Results {
 		fmt.Println(result.Name)
@@ -27,19 +27,19 @@ func commandMap(config *config, _ []string) error {
 	return nil
 }
 
-func commandMapb(config *config) error {
-	if config.Previous == nil {
+func commandMapb(config *config, _ []string) error {
+	if config.PreviousLocationArea == nil {
 		fmt.Println("you're on the first page")
 		return nil
 	}
 
-	mapRes, err := pokeapi.GetLocationAreas(*config.Previous, config.Cache)
+	mapRes, err := pokeapi.GetLocationAreas(*config.PreviousLocationArea, config.Cache)
 	if err != nil {
 		return fmt.Errorf("error getting location areas: %w", err)
 	}
 
-	config.Next = mapRes.Next
-	config.Previous = mapRes.Previous
+	config.NextLocationArea = mapRes.Next
+	config.PreviousLocationArea = mapRes.Previous
 
 	for _, result := range mapRes.Results {
 		fmt.Println(result.Name)

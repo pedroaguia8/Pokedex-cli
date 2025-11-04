@@ -1,54 +1,47 @@
 package pokeapi
 
-type areaPokemonsResponse struct {
-	EncounterMethodRates []struct {
-		EncounterMethod struct {
-			Name string `json:"name"`
-			URL  string `json:"url"`
-		} `json:"encounter_method"`
-		VersionDetails []struct {
-			Rate    int `json:"rate"`
-			Version struct {
-				Name string `json:"name"`
-				URL  string `json:"url"`
-			} `json:"version"`
-		} `json:"version_details"`
-	} `json:"encounter_method_rates"`
-	GameIndex int `json:"game_index"`
-	ID        int `json:"id"`
-	Location  struct {
-		Name string `json:"name"`
-		URL  string `json:"url"`
-	} `json:"location"`
-	Name  string `json:"name"`
-	Names []struct {
-		Language struct {
-			Name string `json:"name"`
-			URL  string `json:"url"`
-		} `json:"language"`
-		Name string `json:"name"`
-	} `json:"names"`
-	PokemonEncounters []struct {
-		Pokemon struct {
-			Name string `json:"name"`
-			URL  string `json:"url"`
-		} `json:"pokemon"`
-		VersionDetails []struct {
-			EncounterDetails []struct {
-				Chance          int   `json:"chance"`
-				ConditionValues []any `json:"condition_values"`
-				MaxLevel        int   `json:"max_level"`
-				Method          struct {
-					Name string `json:"name"`
-					URL  string `json:"url"`
-				} `json:"method"`
-				MinLevel int `json:"min_level"`
-			} `json:"encounter_details"`
-			MaxChance int `json:"max_chance"`
-			Version   struct {
-				Name string `json:"name"`
-				URL  string `json:"url"`
-			} `json:"version"`
-		} `json:"version_details"`
-	} `json:"pokemon_encounters"`
+import (
+	"encoding/json"
+	"fmt"
+	"io"
+	"log"
+	"net/http"
+
+	"github.com/pedroaguia8/Pokedex-cli/internal/pokecache"
+)
+
+func GetAreaPokemon(url string, cache *pokecache.Cache) (AreaPokemonsResponse, error) {
+	if cachedData, ok := cache.Get(url); ok {
+		pokemon := AreaPokemonsResponse{}
+		err := json.Unmarshal(cachedData, &pokemon)
+		if err != nil {
+			return AreaPokemonsResponse{}, fmt.Errorf("error unmarshalling cached area's pokemon: %w", err)
+		}
+		log.Println("Using cached search")
+		return pokemon, nil
+	}
+
+	res, err := http.DefaultClient.Get(url)
+	if err != nil {
+		return AreaPokemonsResponse{}, fmt.Errorf("error making request: %w", err)
+	}
+	body, err := io.ReadAll(res.Body)
+	err = res.Body.Close()
+	if err != nil {
+		return AreaPokemonsResponse{}, fmt.Errorf("error closing response body: %w", err)
+	}
+	if res.StatusCode > 299 {
+		return AreaPokemonsResponse{},
+			fmt.Errorf("response failed with status code: %d and\nbody: %s\n", res.StatusCode, body)
+	}
+
+	pokemonRes := AreaPokemonsResponse{}
+	err = json.Unmarshal(body, &pokemonRes)
+	if err != nil {
+		return AreaPokemonsResponse{}, fmt.Errorf("error unmarshalling response: %w", err)
+	}
+
+	cache.Add(url, body)
+
+	return pokemonRes, nil
 }

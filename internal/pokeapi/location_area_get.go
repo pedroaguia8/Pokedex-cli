@@ -10,16 +10,6 @@ import (
 	"github.com/pedroaguia8/Pokedex-cli/internal/pokecache"
 )
 
-type LocationAreaResponse struct {
-	Count    int     `json:"count"`
-	Next     *string `json:"next"`
-	Previous *string `json:"previous"`
-	Results  []struct {
-		Name string `json:"name"`
-		URL  string `json:"url"`
-	} `json:"results"`
-}
-
 func GetLocationAreas(url string, cache *pokecache.Cache) (LocationAreaResponse, error) {
 	if cachedData, ok := cache.Get(url); ok {
 		areas := LocationAreaResponse{}
