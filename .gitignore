@@ -34,3 +34,6 @@ go.work.sum
 repl.log
 
 Pokedex-cli
+
+# JetBrains IDE settings
+.idea/
