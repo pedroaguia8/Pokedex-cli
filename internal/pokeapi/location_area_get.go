@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+
+	"github.com/pedroaguia8/Pokedex-cli/internal/pokecache"
 )
 
 type LocationAreaResponse struct {
@@ -17,7 +20,17 @@ type LocationAreaResponse struct {
 	} `json:"results"`
 }
 
-func GetLocationAreas(url string) (LocationAreaResponse, error) {
+func GetLocationAreas(url string, cache *pokecache.Cache) (LocationAreaResponse, error) {
+	if cachedData, ok := cache.Get(url); ok {
+		areas := LocationAreaResponse{}
+		err := json.Unmarshal(cachedData, &areas)
+		if err != nil {
+			return LocationAreaResponse{}, fmt.Errorf("error unmarshalling cached areas: %w", err)
+		}
+		log.Println("Using cached search")
+		return areas, nil
+	}
+
 	res, err := http.Get(url)
 	if err != nil {
 		return LocationAreaResponse{}, fmt.Errorf("error making request: %w", err)
@@ -35,8 +48,10 @@ func GetLocationAreas(url string) (LocationAreaResponse, error) {
 	mapRes := LocationAreaResponse{}
 	err = json.Unmarshal(body, &mapRes)
 	if err != nil {
-		return LocationAreaResponse{}, fmt.Errorf("error unmarshalling responde: %w", err)
+		return LocationAreaResponse{}, fmt.Errorf("error unmarshalling response: %w", err)
 	}
+
+	cache.Add(url, body)
 
 	return mapRes, nil
 }

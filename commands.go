@@ -30,7 +30,7 @@ func commandMap(config *config) error {
 		return nil
 	}
 
-	mapRes, err := pokeapi.GetLocationAreas(*config.Next)
+	mapRes, err := pokeapi.GetLocationAreas(*config.Next, config.Cache)
 	if err != nil {
 		return fmt.Errorf("error getting location areas: %w", err)
 	}
@@ -51,7 +51,7 @@ func commandMapb(config *config) error {
 		return nil
 	}
 
-	mapRes, err := pokeapi.GetLocationAreas(*config.Previous)
+	mapRes, err := pokeapi.GetLocationAreas(*config.Previous, config.Cache)
 	if err != nil {
 		return fmt.Errorf("error getting location areas: %w", err)
 	}
