@@ -29,7 +29,6 @@ func main() {
 			continue
 		}
 		commandName := input[0]
-
 		command, ok := getCliCommands()[commandName]
 		if !ok {
 			fmt.Println("Unknown command")
