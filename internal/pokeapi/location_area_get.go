@@ -31,7 +31,7 @@ func GetLocationAreas(url string, cache *pokecache.Cache) (LocationAreaResponse,
 		return areas, nil
 	}
 
-	res, err := http.Get(url)
+	res, err := http.DefaultClient.Get(url)
 	if err != nil {
 		return LocationAreaResponse{}, fmt.Errorf("error making request: %w", err)
 	}
