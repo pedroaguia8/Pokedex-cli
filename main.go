@@ -29,11 +29,12 @@ func main() {
 			continue
 		}
 		commandName := input[0]
+		commandParameters := input[1:]
 		command, ok := getCliCommands()[commandName]
 		if !ok {
 			fmt.Println("Unknown command")
 		} else {
-			err := command.callback(&config)
+			err := command.callback(&config, commandParameters)
 			if err != nil {
 				fmt.Println(err)
 			}

@@ -6,7 +6,7 @@ import (
 	"github.com/pedroaguia8/Pokedex-cli/internal/pokeapi"
 )
 
-func commandMap(config *config) error {
+func commandMap(config *config, _ []string) error {
 	if config.Next == nil {
 		fmt.Println("you're on the last page")
 		return nil
