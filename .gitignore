@@ -31,8 +31,10 @@ go.work.sum
 # .idea/
 # .vscode/
 
+# Aplication logs
 repl.log
 
+# Build file
 Pokedex-cli
 
 # JetBrains IDE settings
