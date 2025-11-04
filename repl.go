@@ -3,6 +3,7 @@ package main
 import (
 	"strings"
 
+	"github.com/pedroaguia8/Pokedex-cli/internal/pokeapi"
 	"github.com/pedroaguia8/Pokedex-cli/internal/pokecache"
 )
 
@@ -11,6 +12,7 @@ type config struct {
 	NextLocationArea     *string
 	PreviousLocationArea *string
 	Cache                *pokecache.Cache
+	Pokedex              map[string]pokeapi.Pokemon
 }
 
 type cliCommand struct {

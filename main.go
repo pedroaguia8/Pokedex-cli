@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/pedroaguia8/Pokedex-cli/internal/pokeapi"
 	"github.com/pedroaguia8/Pokedex-cli/internal/pokecache"
 )
 
@@ -18,6 +19,7 @@ func main() {
 		Cache:            cache,
 		BaseUrl:          &baseUrl,
 		NextLocationArea: &nextLocationAreaUrl,
+		Pokedex:          map[string]pokeapi.Pokemon{},
 	}
 
 	fmt.Println("Welcome to the Pokedex!")

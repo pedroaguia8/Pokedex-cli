@@ -19,13 +19,13 @@ func commandCatch(config *config, commandParameters []string) error {
 		return fmt.Errorf("error retrieving pokemon data: %w", err)
 	}
 
-	if err := throwPokeball(pokemon); err != nil {
+	if err := throwPokeball(pokemon, config.Pokedex); err != nil {
 		return fmt.Errorf("error throwing pokeball: %w", err)
 	}
 	return nil
 }
 
-func throwPokeball(pokemon pokeapi.PokemonResponse) error {
+func throwPokeball(pokemon pokeapi.Pokemon, pokedex map[string]pokeapi.Pokemon) error {
 	if pokemon.BaseExperience == nil {
 		return fmt.Errorf("error retrieving pokemon base experience")
 	}
@@ -37,6 +37,7 @@ func throwPokeball(pokemon pokeapi.PokemonResponse) error {
 	prob := 113.8 / (float64(exp) + 74.8)
 	if prob >= rand.Float64() {
 		fmt.Println(pokemon.Name + " was caught!")
+		pokedex[pokemon.Name] = pokemon
 		return nil
 	}
 	fmt.Println(pokemon.Name + " escaped!")
