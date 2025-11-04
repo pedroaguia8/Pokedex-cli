@@ -32,3 +32,5 @@ go.work.sum
 # .vscode/
 
 repl.log
+
+Pokedex-cli
