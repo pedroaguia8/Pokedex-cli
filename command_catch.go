@@ -37,6 +37,7 @@ func throwPokeball(pokemon pokeapi.Pokemon, pokedex map[string]pokeapi.Pokemon) 
 	prob := 113.8 / (float64(exp) + 74.8)
 	if prob >= rand.Float64() {
 		fmt.Println(pokemon.Name + " was caught!")
+		fmt.Println("You may now inspect it with the inspect command.")
 		pokedex[pokemon.Name] = pokemon
 		return nil
 	}
